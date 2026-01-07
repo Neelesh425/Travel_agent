@@ -1,0 +1,127 @@
+.sidebar {
+  width: 280px;
+  background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
+
+  .sidebar-header {
+    padding: 2rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+    h2 {
+      margin: 0 0 0.5rem 0;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      margin: 0;
+      font-size: 0.875rem;
+      color: #a0a0c0;
+    }
+  }
+
+  .sidebar-nav {
+    flex: 1;
+    padding: 2rem 0;
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      color: #e0e0f0;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      position: relative;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.05);
+        padding-left: 2rem;
+      }
+
+      &.active {
+        background: rgba(74, 144, 226, 0.2);
+        border-left: 4px solid #4a90e2;
+        color: white;
+
+        .icon {
+          transform: scale(1.2);
+        }
+      }
+
+      .icon {
+        font-size: 1.5rem;
+        margin-right: 1rem;
+        transition: transform 0.3s ease;
+      }
+
+      .label {
+        font-size: 1rem;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .sidebar-footer {
+    padding: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+    .ai-status {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding: 0.75rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+
+      .status-indicator {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin-right: 0.75rem;
+        background: #4caf50;
+        box-shadow: 0 0 10px #4caf50;
+        animation: pulse 2s infinite;
+
+        &.active {
+          background: #4caf50;
+        }
+      }
+
+      span {
+        font-size: 0.875rem;
+        font-weight: 500;
+      }
+    }
+
+    .footer-text {
+      margin: 0;
+      font-size: 0.75rem;
+      color: #808090;
+      text-align: center;
+    }
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+}
