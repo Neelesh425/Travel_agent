@@ -1,25 +1,25 @@
 from pydantic_settings import BaseSettings
 from functools import lru_cache
-import os
-from dotenv import load_dotenv
-
-load_dotenv()
 
 class Settings(BaseSettings):
-    # API Configuration
-    flight_api_key: str = os.getenv("FLIGHT_API_KEY", "")
-    flight_api_url: str = os.getenv("FLIGHT_API_URL", "https://api.example.com/flights")
+    # Ollama settings
+    ollama_model: str = "llama3.2:latest"
+    ollama_host: str = "http://localhost:11434"
     
-    # LLM Configuration
-    ollama_host: str = os.getenv("OLLAMA_HOST", "http://localhost:11434")
-    ollama_model: str = os.getenv("OLLAMA_MODEL", "llama3.2:latest")
+    # API settings
+    flight_api_key: str = ""
+    flight_api_url: str = ""
     
-    # Server Configuration
-    backend_port: int = int(os.getenv("BACKEND_PORT", "8000"))
-    frontend_url: str = os.getenv("FRONTEND_URL", "http://localhost:5173")
+    # Server settings
+    frontend_url: str = "http://localhost:5173"
+    backend_port: int = 8000
+    
+    # Database settings
+    database_url: str = "sqlite:///./travel_booking.db"
     
     class Config:
         env_file = ".env"
+        case_sensitive = False
 
 @lru_cache()
 def get_settings():

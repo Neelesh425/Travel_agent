@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.routes import router
 from app.config import get_settings
+from app.database import init_db
 
 settings = get_settings()
 
@@ -20,6 +21,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Initialize database on startup
+@app.on_event("startup")
+def startup_event():
+    """Create database tables on startup"""
+    init_db()
+    print("✅ Database initialized successfully!")
+
 # Include routes
 app.include_router(router)
 
@@ -28,7 +36,8 @@ async def root():
     return {
         "message": "Travel Booking Agent API",
         "version": "1.0.0",
-        "docs": "/docs"
+        "docs": "/docs",
+        "database": "SQLite"
     }
 
 if __name__ == "__main__":

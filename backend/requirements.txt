@@ -6,3 +6,4 @@ python-dotenv
 httpx
 ollama
 python-multipart
+sqlalchemy

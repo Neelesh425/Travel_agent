@@ -43,13 +43,42 @@ export const bookFlight = async (bookingData) => {
   }
 };
 
-// History
-export const getSearchHistory = async () => {
+// History - Updated with filters and pagination
+export const getSearchHistory = async (params = {}) => {
   try {
-    const response = await api.get('/api/history');
+    const { limit = 20, offset = 0, destination, origin, status } = params;
+    const queryParams = new URLSearchParams({
+      limit: limit.toString(),
+      offset: offset.toString(),
+    });
+    
+    if (destination) queryParams.append('destination', destination);
+    if (origin) queryParams.append('origin', origin);
+    if (status) queryParams.append('status', status);
+    
+    const response = await api.get(`/api/history?${queryParams.toString()}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching history:', error);
+    throw error;
+  }
+};
+
+// Bookings - New endpoint
+export const getBookings = async (params = {}) => {
+  try {
+    const { limit = 20, offset = 0, status } = params;
+    const queryParams = new URLSearchParams({
+      limit: limit.toString(),
+      offset: offset.toString(),
+    });
+    
+    if (status) queryParams.append('status', status);
+    
+    const response = await api.get(`/api/bookings?${queryParams.toString()}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching bookings:', error);
     throw error;
   }
 };
