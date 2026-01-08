@@ -9,6 +9,7 @@ const api = axios.create({
   },
 });
 
+// Flight search and booking
 export const searchFlights = async (searchParams) => {
   try {
     const response = await api.post('/api/search', searchParams);
@@ -42,6 +43,7 @@ export const bookFlight = async (bookingData) => {
   }
 };
 
+// History
 export const getSearchHistory = async () => {
   try {
     const response = await api.get('/api/history');
@@ -52,12 +54,44 @@ export const getSearchHistory = async () => {
   }
 };
 
+// Health check
 export const checkHealth = async () => {
   try {
     const response = await api.get('/api/health');
     return response.data;
   } catch (error) {
     console.error('Error checking health:', error);
+    throw error;
+  }
+};
+
+// Conversational travel planning
+export const chatWithAgent = async (chatRequest) => {
+  try {
+    const response = await api.post('/api/chat', chatRequest);
+    return response.data;
+  } catch (error) {
+    console.error('Error in chat:', error);
+    throw error;
+  }
+};
+
+export const createTravelPlan = async (planRequest) => {
+  try {
+    const response = await api.post('/api/plan-travel', planRequest);
+    return response.data;
+  } catch (error) {
+    console.error('Error creating travel plan:', error);
+    throw error;
+  }
+};
+
+export const bookCompletePlan = async (bookingRequest) => {
+  try {
+    const response = await api.post('/api/book-complete-plan', bookingRequest);
+    return response.data;
+  } catch (error) {
+    console.error('Error booking complete plan:', error);
     throw error;
   }
 };

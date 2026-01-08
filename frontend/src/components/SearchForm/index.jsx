@@ -59,7 +59,7 @@ const SearchForm = ({ onSearch, onSearchAndBook, loading, autonomousLoading }) =
       <form className="search-form" onSubmit={handleSubmit}>
         <div className="form-header">
           <h2>Search Flights</h2>
-          <p>Find best options or book it in one Go</p>
+          <p>Let our AI agent find the best flights for you</p>
         </div>
 
         <div className="form-group trip-type">
@@ -202,8 +202,8 @@ const SearchForm = ({ onSearch, onSearchAndBook, loading, autonomousLoading }) =
               </>
             ) : (
               <>
-                <span></span>
-                Search & Book 
+                <span>🤖</span>
+                Search & Book Best Option
               </>
             )}
           </button>

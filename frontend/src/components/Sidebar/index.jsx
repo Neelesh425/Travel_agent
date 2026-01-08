@@ -9,13 +9,21 @@ const Sidebar = () => {
     <div className="sidebar">
       <div className="sidebar-header">
         <h2>Travel MadeEasy</h2>
-        <p className="subtitle">Autonomous Booking</p>
+        <p className="subtitle">AI-Powered Booking</p>
       </div>
 
       <nav className="sidebar-nav">
         <Link 
           to="/" 
           className={`nav-item ${location.pathname === '/' ? 'active' : ''}`}
+        >
+          <span className="icon">🤖</span>
+          <span className="label">AI Travel Planner</span>
+        </Link>
+
+        <Link 
+          to="/search" 
+          className={`nav-item ${location.pathname === '/search' ? 'active' : ''}`}
         >
           <span className="icon">🔍</span>
           <span className="label">Search Flights</span>

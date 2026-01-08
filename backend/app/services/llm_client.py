@@ -159,3 +159,120 @@ class LLMClient:
         
         response = await self.generate_response(prompt)
         return response
+    
+    # New methods for conversational travel planning
+    
+    async def extract_travel_info(self, user_message: str, current_info: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Extract travel information from user message
+        """
+        prompt = f"""
+        Extract travel information from this user message. Current information we have:
+        {json.dumps(current_info, indent=2)}
+        
+        User message: "{user_message}"
+        
+        Extract and respond ONLY with a JSON object containing any of these fields that you can identify:
+        {{
+            "destination": "city name or null",
+            "origin": "city name or null",
+            "budget": number or null,
+            "days": number or null,
+            "interests": ["interest1", "interest2"] or [],
+            "departure_date": "YYYY-MM-DD or null",
+            "passengers": number or null
+        }}
+        
+        Rules:
+        - Only include fields that are mentioned in the message
+        - For budget, extract numeric values (convert "50k" to 50000, "1 lakh" to 100000)
+        - For interests, look for keywords like: relaxation, adventure, food, culture, luxury, budget, beach, mountains, etc.
+        - For days, extract numbers like "3 days", "a week" (7 days)
+        - Return valid JSON only, no explanation
+        """
+        
+        response = await self.generate_response(prompt)
+        
+        try:
+            # Clean the response
+            cleaned = response.strip()
+            if '```json' in cleaned:
+                cleaned = cleaned.split('```json')[1].split('```')[0].strip()
+            elif '```' in cleaned:
+                cleaned = cleaned.split('```')[1].split('```')[0].strip()
+            
+            extracted = json.loads(cleaned)
+            
+            # Merge with current info
+            result = {**current_info}
+            for key, value in extracted.items():
+                if value is not None and value != [] and value != "":
+                    if key == 'interests' and isinstance(value, list):
+                        # Append interests instead of replacing
+                        result[key] = list(set(result.get(key, []) + value))
+                    else:
+                        result[key] = value
+            
+            return result
+        except Exception as e:
+            print(f"Error parsing LLM extraction: {e}, Response: {response}")
+            return current_info
+    
+    async def generate_next_question(self, extracted_info: Dict[str, Any]) -> str:
+        """
+        Generate the next question to ask based on what information is missing
+        """
+        missing_fields = []
+        if not extracted_info.get('destination'):
+            missing_fields.append('destination')
+        if not extracted_info.get('budget'):
+            missing_fields.append('budget')
+        if not extracted_info.get('days'):
+            missing_fields.append('days')
+        if not extracted_info.get('interests'):
+            missing_fields.append('interests')
+        
+        if not missing_fields:
+            return "Great! I have all the information. Let me create your travel plan!"
+        
+        prompt = f"""
+        You are a friendly travel planning AI assistant. Generate a natural follow-up question.
+        
+        Information we have:
+        {json.dumps(extracted_info, indent=2)}
+        
+        Missing information: {', '.join(missing_fields)}
+        
+        Generate ONE friendly question to ask next. Priority order:
+        1. destination (if missing)
+        2. budget (if missing)
+        3. days (if missing)
+        4. interests (if missing)
+        
+        Keep it conversational and friendly. Don't ask for all missing info at once.
+        Response should be 1-2 sentences maximum.
+        """
+        
+        response = await self.generate_response(prompt)
+        return response.strip()
+    
+    async def generate_travel_plan_summary(self, plan_details: Dict[str, Any]) -> str:
+        """
+        Generate a friendly summary of the travel plan
+        """
+        prompt = f"""
+        Create a brief, exciting summary (2-3 sentences) of this travel plan:
+        
+        Destination: {plan_details['destination']}
+        Duration: {plan_details['days']} days
+        Budget: ₹{plan_details['budget']}
+        Total Cost: ₹{plan_details['total_cost']}
+        Flight: {plan_details['flight'].get('airline', '')} {plan_details['flight'].get('flight_number', '')}
+        Hotel: {plan_details['hotel'].get('name', '')} ({plan_details['hotel'].get('rating', 0)}★)
+        Interests: {', '.join(plan_details.get('interests', []))}
+        
+        Make it enthusiastic and highlight key features!
+        """
+        
+        response = await self.generate_response(prompt)
+        return response.strip()

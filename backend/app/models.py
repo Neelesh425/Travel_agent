@@ -73,3 +73,74 @@ class HistoryItem(BaseModel):
     search_params: Dict[str, Any]
     timestamp: str
     result_count: int
+
+# New models for conversational travel planning
+
+class ChatMessage(BaseModel):
+    role: str = Field(..., description="Either 'user' or 'ai'")
+    content: str = Field(..., description="Message content")
+    timestamp: Optional[str] = Field(None, description="Message timestamp")
+
+class ChatRequest(BaseModel):
+    message: str = Field(..., description="User message")
+    conversation_history: List[ChatMessage] = Field(default=[], description="Previous conversation")
+    extracted_info: Optional[Dict[str, Any]] = Field(default={}, description="Previously extracted travel info")
+
+class ChatResponse(BaseModel):
+    message: str = Field(..., description="AI response")
+    extracted_info: Dict[str, Any] = Field(..., description="Extracted travel information")
+    is_ready_to_plan: bool = Field(..., description="Whether we have enough info to generate plan")
+    conversation_history: List[ChatMessage] = Field(..., description="Updated conversation history")
+
+class TravelPlanRequest(BaseModel):
+    destination: str
+    origin: Optional[str] = Field(default="Delhi")
+    budget: float
+    days: int
+    interests: List[str] = Field(default=[])
+    departure_date: Optional[str] = None
+    passengers: int = Field(default=1)
+
+class Hotel(BaseModel):
+    hotel_id: str
+    name: str
+    category: str
+    rating: float
+    price_per_night: float
+    currency: str
+    location: str
+    amenities: List[str]
+    available_rooms: int
+    distance_from_center: str
+
+class DayItinerary(BaseModel):
+    day: int
+    title: str
+    activities: Dict[str, str]
+
+class TravelPlan(BaseModel):
+    destination: str
+    origin: str
+    departure_date: str
+    return_date: str
+    days: int
+    passengers: int
+    budget: float
+    total_cost: float
+    remaining_budget: float
+    flight: Dict[str, Any]
+    hotel: Dict[str, Any]
+    itinerary: List[DayItinerary]
+    summary: str
+    interests: List[str]
+
+class CompletePlanBookingRequest(BaseModel):
+    plan: TravelPlan
+    passenger_details: Dict[str, Any]
+
+class CompletePlanBookingResponse(BaseModel):
+    status: str
+    flight_booking: Dict[str, Any]
+    hotel_booking: Dict[str, Any]
+    total_cost: float
+    message: str
